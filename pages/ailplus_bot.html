@@ -37,51 +37,49 @@
     }
     input{
         border: 2px solid black;
-  border-radius: 4px;
-  font-size: 25px;
-  width: 70%;margin: 10px 0px;
-  padding: 5px;
+        border-radius: 4px;
+        font-size: 25px;
+        width: 70%;
+        margin: 10px 0px;
+        padding: 5px;
     }
     button{
         border: 2px solid black;
-  border-radius: 4px;
-  font-size: 25px;
-  width: 20%;margin: 10px 0px;
-  padding: 5px;
+        border-radius: 4px;
+        font-size: 25px;
+        width: 20%;
+        margin: 10px 0px;
+        padding: 5px;
     }
     #loading-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(255, 255, 255, 0.8);
-    background-size: cover;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    z-index: 9999;
-}
-
-#loading-overlay::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(255, 255, 255, 0.8); /* Adjust the background color and opacity */
-    filter: blur(4px); /* Adjust the blur amount */
-}
-
-#loading-message {
-    font-size: 20px;
-    color: #333; /* Adjust the text color */
-    z-index: 1; /* Ensure the text is on top of the blurred background */
-    display: none;
-    
-}
-
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.8);
+        background-size: cover;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+    }
+    #loading-overlay::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.8); /* Adjust the background color and opacity */
+        filter: blur(4px); /* Adjust the blur amount */
+    }
+    #loading-message {
+        font-size: 20px;
+        color: #333; /* Adjust the text color */
+        z-index: 1; /* Ensure the text is on top of the blurred background */
+        display: none;
+    }
 </style>
 <body>
     <header>
@@ -91,72 +89,62 @@
     <div id="loading-overlay">
         <div id="loading-message">Loading...</div>
     </div>
-    <script> 
-    const apiUrl = '/data';
-let time = []
-let zoom_link = "https://gigack.easywebinar.live/registration?source=TGA&noti=dackerman&bkr=Ackerman"
-// Using the Fetch API to get data from the server
-fetch("/data")
+    <script>
+        const apiUrl = '/data';
+        let time = [];
+        let zoom_link = "https://gigack.easywebinar.live/registration?source=TGA&noti=dackerman&bkr=Ackerman";
+        
+        // Fetching event start times
+        fetch(apiUrl)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Server error: ${response.status} ${response.statusText}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (Array.isArray(data)) {
+                    time = data.map(event => event.start);
+                    console.log('Start times:', time);
+                } else {
+                    console.error('Invalid data format. Expected an array:', data);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error.message);
+            });
+
+        // Fetching user data
+        fetch('/user')
     .then(response => {
-        // Check if the response status is ok (2xx)
         if (!response.ok) {
-            throw new Error(`Server error: ${response.status} ${response.statusText}`);
+            throw new Error(`HTTP error! Status: ${response.status}`);
         }
         return response.json();
     })
-    .then(data => {
-        // Check if data is an array before using map
-        if (Array.isArray(data)) {
-            // Extract start times from the response
-            time = data.map(event => event.start);
-            
-            // Log or use the 'time' array as needed
-            console.log('Start times:', time);
-        } else {
-            // Handle the case when data is not an array
-            console.error('Invalid data format. Expected an array:', data);
-        }
+    .then(userData => {
+        console.log(userData);
+        // Extracting details
+        name = userData.name || "";
+        email = userData.email || "";
+        phonenumber = userData.phonenumber || "";
+        city = userData.city || "";
+        zip = userData.zip || "";
+        country = userData.country || "";
+
+        // Now that we have user data, dynamically generate the initial HTML content
+        document.getElementById("dummy").innerHTML = `
+            <div class="input-container">
+                <p><b>Good Morning/Afternoon/Evening, Is this ${name}? </b></p>
+                <input type="text" id="first">
+                <button type="button" onclick="first()">Submit</button>
+            </div>
+        `;
     })
     .catch(error => {
-        // Handle errors
-        console.error('Error:', error.message);
+        console.error('Error fetching user data:', error.message);
     });
 
-        const data=[]
-        const meeting = "https://gigack.easywebinar.live/registration?source=TGA&noti=dackerman&bkr=Ackerman"
-        
-        var name
-        // let number_of_childrens = "400"
-        let address
-        let email,city,zip,country
-        let phonenumber
-        
-    fetch('/user')
-  .then(response => {
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
-    return response.json();
-  })
-  .then(userData => {
-    // Extracting details
-    name = userData.name||"";
-    email = userData.email||"";
-    phonenumber = userData.phonenumber || ""
-     city= userData.city || ""
-     zip =  userData.zip || ""
-     country= userData.country || ""
-    // address = 
-    // };
-
-    // Use the extracted data as needed
-    // console.log('Name:', name);
-    // console.log('Email:', email);
-    // console.log('Address:', address);
-  })
-  .catch(error => {
-    console.error('Error fetching user data:', error.message);
-  });
         function displayLoading() {
             document.getElementById("loading-overlay").style.display = "flex";
             document.getElementById("loading-message").style.display = "flex";
@@ -166,18 +154,13 @@ fetch("/data")
             document.getElementById("loading-overlay").style.display = "none";
             document.getElementById("loading-message").style.display = "none";
         }
+
         function containsNegativeKeyword(value) {
             const negativeKeywords = ["dont", "donot", "don't", "doesnot", "doesn't", "i will not provide it", "sorry"];
             const lowercasedValue = value.toLowerCase();
             return negativeKeywords.some(keyword => lowercasedValue.includes(keyword));
         }
-         document.getElementById("dummy").innerHTML = `
-            <div class="input-container">
-                <p><b>Good Morning/Afternoon/Evening, Is this ${name}? </b></p>
-                <input type="text" id="first">
-                <button type="button" onclick="first()">Submit</button>
-            </div>
-        `;
+
 
         function first() {
             let childrens = document.getElementById("first").value;
@@ -199,260 +182,165 @@ fetch("/data")
             }
         }
 
-        function second(){
-            let childrens = document.getElementById("second").value
+        function second() {
+            let childrens = document.getElementById("second").value;
             if (containsNegativeKeyword(childrens)) {
-                alert("Please provide me valid information as it is required to give you the best service!");
+                alert("Please provide valid information as it is required to give you the best service!");
                 return;
-            }else{
-            let dummy = document.getElementById("dummy").innerHTML
-            displayLoading();
-            setTimeout(() => {
-            document.getElementById("dummy").innerHTML = dummy + `
-            <p>I'm glad you could take some time and I didn't want to take too long but I did want to reach out regarding the position from your resume. I wanted to give you some information about my company if you hadn't already done some looking around and I also wanted to see what you were looking for as well. </p>
-            <div class="input-container">
-                <p><b>Are you currently working?</b></p>
-                <input type="text" id="working_or_not third" placeholder = " Enter 'yes' or 'no'">
-                <button type="button" onclick="third()">Submit</button>
-            </div>
-            `
-            hideLoading(); }, 1000);}
-            
-
+            } else {
+                let dummy = document.getElementById("dummy").innerHTML;
+                displayLoading();
+                setTimeout(() => {
+                    document.getElementById("dummy").innerHTML = dummy + `
+                        <p>I'm glad you could take some time and I didn't want to take too long but I did want to reach out regarding the position from your resume. I wanted to give you some information about my company if you hadn't already done some looking around and I also wanted to see what you were looking for as well.</p>
+                        <div class="input-container">
+                            <p><b>Are you currently working?</b></p>
+                            <input type="text" id="working_or_not" placeholder="Enter 'yes' or 'no'">
+                            <button type="button" onclick="third()">Submit</button>
+                        </div>`;
+                    hideLoading();
+                }, 1000);
+            }
         }
-        function third(){
-            let childrens = document.getElementById("working_or_not third").value
+
+        function third() {
+            let childrens = document.getElementById("working_or_not").value;
             if (containsNegativeKeyword(childrens)) {
-                alert("Please provide me valid information as it is required to give you the best service!");
+                alert("Please provide valid information as it is required to give you the best service!");
                 return;
-            }else{
-            if(document.getElementById("working_or_not third").value.toLowerCase() == "yes"){
-                let dummy = document.getElementById("dummy").innerHTML
+            } else {
+                let dummy = document.getElementById("dummy").innerHTML;
                 displayLoading();
-            setTimeout(() => {
-            document.getElementById("dummy").innerHTML = dummy + `
-            <div>
-                <p><b>Ok, so what is driving you to look for another position?</b></p>
-                <input type="text" id="no" >
-                <button type="button" onclick="forth()">Submit</button>
-            </div>
-            `
-            hideLoading(); }, 1000);
+                setTimeout(() => {
+                    if (childrens.toLowerCase() == "yes") {
+                        document.getElementById("dummy").innerHTML = dummy + `
+                            <div>
+                                <p><b>Ok, so what is driving you to look for another position?</b></p>
+                                <input type="text" id="reason">
+                                <button type="button" onclick="forth()">Submit</button>
+                            </div>`;
+                    } else if (childrens.toLowerCase() == "no") {
+                        document.getElementById("dummy").innerHTML = dummy + `
+                            <div>
+                                <p><b>Ok, so what are you looking for in a job?</b></p>
+                                <input type="text" id="reason">
+                                <button type="button" onclick="forth()">Submit</button>
+                            </div>`;
+                    }
+                    hideLoading();
+                }, 1000);
             }
-            else if(document.getElementById("working_or_not third").value.toLowerCase() == "no"){
-                let dummy = document.getElementById("dummy").innerHTML
-                displayLoading();
-            setTimeout(() => {
-            document.getElementById("dummy").innerHTML = dummy + `
-            <div>
-                <p><b>Ok, so what are you looking for in a job?</b></p>
-                <input type="text" id="no">
-                <button type="button" onclick="forth()">Submit</button>
-            </div>
-            ` 
-            hideLoading(); }, 1000);
-            }}}
-            function    forth(){
-                let childrens = document.getElementById("no").value
-                if (containsNegativeKeyword(childrens)) {
-                alert("Please provide me valid information as it is required to give you the best service!");
-                return;
-            }else{
-                let dummy = document.getElementById("dummy").innerHTML
-                displayLoading();
-            setTimeout(() => {
-            document.getElementById("dummy").innerHTML = dummy + `
-            <div>
-                <p><b>What would you like to do differently to achieve that goal?</b></p>
-                <input type="text" id="fifth">
-                <button type="button" onclick="fifth()">Submit</button>
-            </div>
-            `
-            hideLoading(); }, 1000);
-            }}
-            function    fifth(){
-                let childrens = document.getElementById("fifth").value
-                if (containsNegativeKeyword(childrens)) {
-                alert("Please provide me valid information as it is required to give you the best service!");
-                return;
-            }else{
-                let dummy = document.getElementById("dummy").innerHTML
-                displayLoading();
-            setTimeout(() => {
-            document.getElementById("dummy").innerHTML = dummy + `
-            <div>
-                <p>Understandable! Ok Great! We are a life insurance company I don't know if you had looked around at all but the name of the company that I work for is American Income Life Insurance. Most people haven't heard of that, but they've heard of Globe which is our parent company. So, have you heard of either of those two?</p>
-                <input type="text" id="ah">
-                <button type="button" onclick="sixth()">Submit</button>
-            </div>
-            `
-            hideLoading(); }, 1000);}
-            }
-            function    sixth(){
-                let childrens = document.getElementById("ah").value
-                if (containsNegativeKeyword(childrens)) {
-                alert("Please provide me valid information as it is required to give you the best service!");
-                return;
-            }else{
-                let dummy = document.getElementById("dummy").innerHTML
-                displayLoading();
-            setTimeout(() => {
-            document.getElementById("dummy").innerHTML = dummy + `
-            <div>
-                <p><b>Does remote work interest you? Why?</b></p>
-                <input type="text" id="ahah">
-                <button type="button" onclick="seventh()">Submit</button>
-            </div>
-            `
-            hideLoading(); }, 1000);}
-            }
-            function    seventh(){
-                let childrens = document.getElementById("ahah").value
-                if (containsNegativeKeyword(childrens)) {
-                alert("Please provide me valid information as it is required to give you the best service!");
-                return;
-            }else{
-                let dummy = document.getElementById("dummy").innerHTML
-                displayLoading();
-            setTimeout(() => {
-            document.getElementById("dummy").innerHTML = dummy + `
-            <p>So, the associations, unions and groups that we work with are really looking for somebody to build relationships with. In working with these families, we want to know who's in their family, what their lifestyle is, what medical conditions they have because based on all of that we can make our recommendations for what products are available and best suited for their family’s needs.</p>
-            <div>
-                <p><b>Does that sound like something that you might want to get a little more information on? </b></p>
-                <input type="text" id="ahahah">
-                <button type="button" onclick="eighth()">Submit</button>
-            </div>
-            `
-            hideLoading(); }, 1000);}
-            }
-            function    eighth(){
-                let childrens = document.getElementById("ahahah").value
-                if (containsNegativeKeyword(childrens)) {
-                alert("Please provide me valid information as it is required to give you the best service!");
-                return;
-            }else{
-                let dummy = document.getElementById("dummy").innerHTML
-                displayLoading();
-            setTimeout(() => {
-            document.getElementById("dummy").innerHTML = dummy + `
-            <p>Great! So, the owner of our agency David Ackerman will be running a career webinar. It’s about 20 minutes, it's on zoom, you don't have to be seen but he's giving information on the position, the compensation, the growth, and the management track. You know anything that a candidate would want to know to see if this is for them.</p>
-            <div>
-                <p><b>. So, based on your availability would ${time[0]} work for you? </b></p>
-                <input type="text" id="time idontknow" placeholder="Enter 'yes' or 'no'">
-                <button type="button" onclick="ninth()">Submit</button>
-            </div>
-            ` 
-            hideLoading(); }, 1000);}
-            }
-            function    ninth(){
-                let childrens = document.getElementById("time idontknow").value
-                if (containsNegativeKeyword(childrens)) {
-                alert("Please provide me valid information as it is required to give you the best service!");
-                return;
-            }else{
-                let time = document.getElementById("time idontknow").value
-                if(time.toLowerCase() == "yes"){
-                    alert("Here is the zoom link where you can attend the meeting : " + zoom_link)
-                    let dummy = document.getElementById("dummy").innerHTML
-                    displayLoading();
-            setTimeout(() => {
-            document.getElementById("dummy").innerHTML = dummy + `
-                <p>Ok let me get your information and get you registered for that. Your First and Last Name is ${name}Your email is ${email}The city you are in is ${city} correct? So, my office is actually in New Jersey.  But, this is fully remote, so location is not really a factor.</p>
-                </break>
-                <p> So ${name} would you mind checking your email to make sure you've received it. Ok so ${time[0]} jump on the webinar 5 minutes before. Listen, take notes and you'll be able to ask questions but write them down in case that he doesn't get to them, see if this is for you and if so then we want to talk about next steps. Ok ${name} great thank you for taking the call and we'll talk Later. Have a nice day!</p>
-            ` 
-            hideLoading(); }, 1000);
-            const data_to_submit = {
-                'name' : name,
-                'email' : email,
-                'platform' : "ailplus",
-                'phonenumber' : phonenumber,
-                'address' : address,
-                'time': time[0],
-                'link' : meeting
-            }
-            const serverEndpoint = '/email';
+        }
 
-// Using the Fetch API to send data to the server
-fetch(serverEndpoint, {
-    method: 'POST', // You can use 'GET' or 'POST' depending on your server setup
-    headers: {
-        'Content-Type': 'application/json',
-        // Add any other headers you may need, such as authentication tokens
-    },
-    body: JSON.stringify(data_to_submit),
-})
-    .then(response => response.json())
-    .then(data => {
-        // Handle the response from the server
-        console.log('Server response:', data);window.location.href = '/thanks'
-    })
-    .catch(error => {
-        // Handle errors
-        console.error('Error:', error);
-    });
-            
+        function forth() {
+            let childrens = document.getElementById("reason").value;
+            if (containsNegativeKeyword(childrens)) {
+                alert("Please provide valid information as it is required to give you the best service!");
+                return;
+            } else {
+                let dummy = document.getElementById("dummy").innerHTML;
+                displayLoading();
+                setTimeout(() => {
+                    document.getElementById("dummy").innerHTML = dummy + `
+                        <div class="input-container">
+                            <p>So I appreciate that! So I have your application in front of me. Just to double-check that I have it right...</p>
+                            <p><b>Your Name:</b> ${name}</p>
+                            <p><b>Email:</b> ${email}</p>
+                            <p><b>Phone Number:</b> ${phonenumber}</p>
+                            <p><b>City:</b> ${city}</p>
+                            <p><b>Zip:</b> ${zip}</p>
+                            <p><b>Country:</b> ${country}</p>
+                            <p>Does that sound right?</p>
+                            <input type="text" id="validation" placeholder="Enter 'yes' or 'no'">
+                            <button type="button" onclick="fifth()">Submit</button>
+                        </div>`;
+                    hideLoading();
+                }, 1000);
+            }
+        }
+
+        function fifth() {
+            let childrens = document.getElementById("validation").value;
+            if (containsNegativeKeyword(childrens)) {
+                alert("Please provide valid information as it is required to give you the best service!");
+                return;
+            } else {
+                let dummy = document.getElementById("dummy").innerHTML;
+                displayLoading();
+                setTimeout(() => {
+                    if (time.length > 0) {
+                        document.getElementById("dummy").innerHTML = dummy + `
+                            <div class="input-container">
+                                <p>So I want to get you on with one of my managers that can go through the position and answer any of the questions that you have, and to make sure it is a good fit for both of us. </p>
+                                <p>We have times available at: ${time.join(', ')}</p>
+                                <p><b>Which time works best for you?</b></p>
+                                <input type="text" id="time">
+                                <button type="button" onclick="sixth()">Submit</button>
+                            </div>`;
+                    } else {
+                        document.getElementById("dummy").innerHTML = dummy + `
+                            <p>Unfortunately, no times are available at the moment. Please check back later.</p>`;
+                    }
+                    hideLoading();
+                }, 1000);
+            }
+        }
+
+        function sixth() {
+    let childrens = document.getElementById("time").value;
+    if (containsNegativeKeyword(childrens)) {
+        alert("Please provide valid information as it is required to give you the best service!");
+        return;
+    } else {
+        let dummy = document.getElementById("dummy").innerHTML;
+        displayLoading();
+        setTimeout(() => {
+            // Prepare data for POST request
+            let data = {
+                platform: 'AilPlus', // Assuming platform is constant
+                email: email, // Assuming email is accessible in this scope
+                name: name, // Assuming name is accessible in this scope
+                link: zoom_link, // Assuming zoom_link is accessible in this scope
+                phonenumber: phonenumber, // Assuming phonenumber is accessible in this scope
+                // address: address, // Assuming address is accessible in this scope
+                time: childrens // Selected meeting time
+            };
+
+            fetch('/email', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error('Failed to send meeting time.');
                 }
-                else if(time.toLowerCase() == "no"){
-                    let dummy = document.getElementById("dummy").innerHTML
-                    displayLoading();
-            setTimeout(() => {
-                const comma = time.join(', ')
-            document.getElementById("dummy").innerHTML = dummy + `
-            <div>
-                <p><b>Which time is best for you from these availabilities : ${comma} ?</b></p>
-                <input type="text" id="time2">
-                <button type="button" onclick="eleventh()">Submit</button>
-            </div>`
-            hideLoading(); }, 1000); 
-                }}
-            }
-            function eleventh(){
-                let childrens = document.getElementById("time2").value
-                if (containsNegativeKeyword(childrens)) {
-                alert("Please provide me valid information as it is required to give you the best service!");
-                return;
-            }else{
+            })
+            .then(responseData => {
+                // Handle response if needed
+                console.log('Server response:', responseData);
+                // Update UI or perform further actions
+                document.getElementById("dummy").innerHTML = dummy + `
+                    <p>Ok, great! I will get you set up for that time.</p>
+                    <p>Please expect an email from us confirming your interview slot. In the meantime, you can prepare for your interview by checking out our website or the following Zoom link:</p>
+                    <a href="${zoom_link}">Zoom Interview Link</a>
+                    <p>Thank you for your time and I look forward to speaking with you again soon!</p>`;
+                hideLoading();
+            })
+            .catch(error => {
+                console.error('Error sending meeting time:', error);
+                // Handle errors
+                hideLoading();
+            });
+        }, 1000);
+    }
+}
 
-                let timer = document.getElementById("time2").value
-                displayLoading();
-            setTimeout(() => {
-            document.getElementById("dummy").innerHTML = dummy + `
-                <p>Ok let me get your information and get you registered for that. Your First and Last Name is ${name}Your email is ${email}The city you are in is ${city} correct? So, my office is actually in New Jersey.  But, this is fully remote, so location is not really a factor.</p>
-                </break>
-                <p> So ${name} would you mind checking your email to make sure you've received it. Ok so ${timer} jump on the webinar 5 minutes before. Listen, take notes and you'll be able to ask questions but write them down in case that he doesn't get to them, see if this is for you and if so then we want to talk about next steps. Ok ${name} great thank you for taking the call and we'll talk Later. Have a nice day!</p>
-            ` 
-            hideLoading(); }, 1000);}
-            const data_to_submit = {
-                'name' : name,
-                'email' : email,
-                'platform' : "ailplus",
-                'phonenumber' : phonenumber,
-                'address' : address,
-                'time': timer,
-                'link' : meeting
-            }
-            const serverEndpoint = '/email';
 
-// Using the Fetch API to send data to the server
-fetch(serverEndpoint, {
-    method: 'POST', // You can use 'GET' or 'POST' depending on your server setup
-    headers: {
-        'Content-Type': 'application/json',
-        // Add any other headers you may need, such as authentication tokens
-    },
-    body: JSON.stringify(data_to_submit),
-})
-    .then(response => response.json())
-    .then(data => {
-        // Handle the response from the server
-        console.log('Server response:', data);window.location.href = '/thanks'
-    })
-    .catch(error => {
-        // Handle errors
-        console.error('Error:', error);
-    });
-            }
-        </script>
+    </script>
 </body>
 </html>

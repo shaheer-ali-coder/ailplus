@@ -2934,36 +2934,34 @@
           <div class="col-md-5">
             <div class="lfg-signup-form bg-transprent">
               <h1>Fill out the form below.</h1>
-              <form class="registration-form">
                 <div class="form-group">
                   <label class="sr-only" for="name">First name</label>
-                  <input type="text" id="name" required="" placeholder="Enter Your Name..." class="form-control">
+                  <input type="text" id="name" required placeholder="Enter Your Name..." class="form-control">
                 </div>
                 <div class="form-group">
                   <label class="sr-only" for="email">Email</label>
-                  <input type="text" id="email" required="" placeholder="Enter Your Email..." class="form-control">
+                  <input type="text" id="email" required placeholder="Enter Your Email..." class="form-control">
                 </div>
                 <div class="form-group">
                     <label class="sr-only" for="phone">Phone number</label>
-                    <input type="text" id="phone" required="" placeholder="Enter Your Phone Number..." class="form-control">
+                    <input type="text" id="phone" required placeholder="Enter Your Phone Number..." class="form-control">
 
                   </div>
                   <div class="form-group">
                     <label class="sr-only" for="city">City</label>
-                    <input type="text" id="city" required="" placeholder="Enter Your City..." class="form-control">
+                    <input type="text" id="city" required placeholder="Enter Your City..." class="form-control">
                   </div>
                   <div class="form-group">
                     <label class="sr-only" for="country">country</label>
-                    <input type="text" id="country" required="" placeholder="Enter Your country..." class="form-control">
+                    <input type="text" id="country" required placeholder="Enter Your country..." class="form-control">
                   </div>
                   <div class="form-group">
                     <label class="sr-only" for="zip">Zip Code</label>
-                    <input type="text" id="zip" required="" placeholder="Enter Your Zip Code..." class="form-control">
+                    <input type="text" id="zip" required placeholder="Enter Your Zip Code..." class="form-control">
                   </div>
                 
                 <button type="submit" id="submit" class="btn btn-danger btn-round  btn-lg">Submit</button>
                 <p>When your AIL Plus membership expiration approaches, an AIL representative will call on you to arrange for renewal and will discuss AIL's supplemental insurance programs that may be available to you and your family on a strictly voluntary basis.  </p>
-              </form>
             </div>
           </div>
         </div>
@@ -3018,14 +3016,15 @@
       // window._loadTemplateLink = "https://aileadtransfer.com/admin/zillapage/templates/gettemplatejson/2";
       // var csrfName = 'csrf_token_name',
       // csrfHash = '78b34e8728f5f43dc33b607efe527109';
-      let name = document.getElementById("name").value
+      let btn = document.getElementById("submit")
+      btn.addEventListener('click',()=>{
+        let name = document.getElementById("name").value
       let phone = document.getElementById("phone").value
       let email = document.getElementById("email").value
       let city = document.getElementById("city").value
       let country = document.getElementById("country").value
-      let btn = document.getElementById("submit")
+      
       let zip = document.getElementById("zip").value
-      btn.addEventListener('click',()=>{
           // window.location.href = 'https://google.com/'
           console.log('clicked')
           let data = {
